@@ -1,0 +1,18 @@
+[Unit]
+Description=Dell Pro 16 Chatbot API (FastAPI)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/dell-pro16-dashboard
+Environment="PATH=/opt/dell-pro16-dashboard/venv/bin"
+EnvironmentFile=/opt/dell-pro16-dashboard/.env
+ExecStart=/opt/dell-pro16-dashboard/venv/bin/uvicorn app.chatbot_api:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/dell-pro16/chatbot.log
+StandardError=append:/var/log/dell-pro16/chatbot.log
+
+[Install]
+WantedBy=multi-user.target

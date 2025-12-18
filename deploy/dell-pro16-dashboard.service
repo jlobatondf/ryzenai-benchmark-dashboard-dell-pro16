@@ -1,0 +1,18 @@
+[Unit]
+Description=Dell Pro 16 Dashboard (Streamlit)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/dell-pro16-dashboard
+Environment="PATH=/opt/dell-pro16-dashboard/venv/bin"
+EnvironmentFile=/opt/dell-pro16-dashboard/.env
+ExecStart=/opt/dell-pro16-dashboard/venv/bin/streamlit run app/dashboard.py --server.port 8501 --server.address 127.0.0.1 --server.headless true
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/dell-pro16/dashboard.log
+StandardError=append:/var/log/dell-pro16/dashboard.log
+
+[Install]
+WantedBy=multi-user.target

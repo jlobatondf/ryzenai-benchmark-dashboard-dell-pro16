@@ -1,0 +1,36 @@
+# Environment
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Scripts (not needed on server - data already processed)
+scripts/
+
+# Tests
+tests/
+
+# Data layers (only gold needed for dashboard)
+data/bronze/
+data/silver/
+
+# Logs
+*.log
+
+# Generated/misc files
+generate_walkthrough_pdf.py
+launch.py
+launch.sh
+FAE_ANALYSIS_REPORT.md
+DASHBOARD_PIPELINE_IMPROVEMENTS.md
+Dashboard_Walkthrough_Guide.pdf
