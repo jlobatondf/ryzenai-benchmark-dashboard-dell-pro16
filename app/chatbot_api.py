@@ -19,7 +19,7 @@ import pandas as pd
 import anthropic
 from dotenv import load_dotenv
 
-from sandbox import DataSandbox
+from .sandbox import DataSandbox
 
 # Load environment variables
 load_dotenv()
