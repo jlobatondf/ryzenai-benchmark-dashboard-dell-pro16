@@ -34,3 +34,6 @@ launch.sh
 FAE_ANALYSIS_REPORT.md
 DASHBOARD_PIPELINE_IMPROVEMENTS.md
 Dashboard_Walkthrough_Guide.pdf
+
+# Claude Code context (local only)
+CLAUDE.md
