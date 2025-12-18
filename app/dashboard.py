@@ -30,6 +30,9 @@ from pathlib import Path
 import httpx
 import uuid
 import os
+import hashlib
+from datetime import datetime, timedelta
+import extra_streamlit_components as stx
 
 # Page configuration
 st.set_page_config(
@@ -43,11 +46,28 @@ st.set_page_config(
 # AUTHENTICATION
 # ============================================================================
 
+@st.cache_resource
+def get_cookie_manager():
+    """Get a cached cookie manager instance."""
+    return stx.CookieManager(key="auth_cookie_manager")
+
 def check_password():
-    """Simple password protection for the dashboard."""
+    """Password protection with 'Remember me' cookie support."""
     # Skip auth if no password is set (local development)
     app_password = os.getenv("APP_PASSWORD", "")
     if not app_password:
+        return True
+
+    cookie_manager = get_cookie_manager()
+    secret_key = os.getenv("COOKIE_SECRET", "default-dev-secret-change-in-prod")
+
+    # Create a signed token (password + secret = harder to forge)
+    valid_token = hashlib.sha256(f"{app_password}{secret_key}".encode()).hexdigest()
+
+    # Check for existing valid cookie
+    auth_cookie = cookie_manager.get("auth_token")
+    if auth_cookie == valid_token:
+        st.session_state.authenticated = True
         return True
 
     if "authenticated" not in st.session_state:
@@ -60,9 +80,17 @@ def check_password():
     st.markdown("Please enter the password to access the dashboard.")
 
     password = st.text_input("Password", type="password", key="password_input")
-    if password:
+    remember_me = st.checkbox("Remember me for 30 days", key="remember_me")
+
+    if st.button("Login", type="primary"):
         if password == app_password:
             st.session_state.authenticated = True
+            if remember_me:
+                cookie_manager.set(
+                    "auth_token",
+                    valid_token,
+                    expires_at=datetime.now() + timedelta(days=30)
+                )
             st.rerun()
         else:
             st.error("Incorrect password")

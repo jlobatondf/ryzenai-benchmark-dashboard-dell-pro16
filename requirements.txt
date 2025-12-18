@@ -9,6 +9,7 @@ pyarrow>=14.0.0
 # Dashboard
 streamlit>=1.28.0
 plotly>=5.18.0
+extra-streamlit-components>=0.1.71
 
 # Chatbot API
 fastapi>=0.104.0
