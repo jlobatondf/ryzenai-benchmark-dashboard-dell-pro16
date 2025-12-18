@@ -46,11 +46,6 @@ st.set_page_config(
 # AUTHENTICATION
 # ============================================================================
 
-@st.cache_resource
-def get_cookie_manager():
-    """Get a cached cookie manager instance."""
-    return stx.CookieManager(key="auth_cookie_manager")
-
 def check_password():
     """Password protection with 'Remember me' cookie support."""
     # Skip auth if no password is set (local development)
@@ -58,7 +53,7 @@ def check_password():
     if not app_password:
         return True
 
-    cookie_manager = get_cookie_manager()
+    cookie_manager = stx.CookieManager(key="auth_cookie_manager")
     secret_key = os.getenv("COOKIE_SECRET", "default-dev-secret-change-in-prod")
 
     # Create a signed token (password + secret = harder to forge)
