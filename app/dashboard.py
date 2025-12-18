@@ -807,11 +807,16 @@ def generate_executive_narrative(model_summary, provider_comparison, run_compari
     # Find NPU weak spots (<3x speedup)
     weak_npu_models = vitisai_models[vitisai_models['speedup_vs_cpu'] < 3]['model_clean'].unique().tolist()
 
-    # Find models where DML wins
-    dml_winners = model_summary.loc[
+    # Find models where each provider wins (by unique model, not configuration)
+    winners_by_model = model_summary.loc[
         model_summary.groupby('model_clean')['throughput_mean_ips'].idxmax()
     ]
-    dml_winner_models = dml_winners[dml_winners['provider'] == 'dml']['model_clean'].tolist()
+    dml_winner_models = winners_by_model[winners_by_model['provider'] == 'dml']['model_clean'].tolist()
+
+    # Calculate actual win rate by unique model (more accurate than per-config)
+    vitisai_unique_wins = len(winners_by_model[winners_by_model['provider'] == 'vitisai'])
+    dml_unique_wins = len(dml_winner_models)
+    vitisai_win_rate_actual = (vitisai_unique_wins / total_models * 100) if total_models > 0 else 0
 
     # Real-time capable models (p50 < 33ms for 30fps)
     realtime_capable = model_summary[
@@ -833,11 +838,11 @@ def generate_executive_narrative(model_summary, provider_comparison, run_compari
         'total_models': total_models,
         'vitisai_avg_speedup': vitisai_avg_speedup,
         'vitisai_max_speedup': vitisai_max_speedup,
-        'vitisai_win_rate': vitisai_win_rate,
-        'vitisai_wins': vitisai_wins,
+        'vitisai_win_rate': vitisai_win_rate_actual,  # Use accurate per-model win rate
+        'vitisai_wins': vitisai_unique_wins,  # Use unique model wins
         'dml_avg_speedup': dml_avg_speedup,
         'dml_max_speedup': dml_max_speedup,
-        'dml_wins': dml_wins,
+        'dml_wins': dml_unique_wins,
         'top_npu_models': top_npu_models,
         'weak_npu_models': weak_npu_models,
         'dml_winner_models': dml_winner_models,
